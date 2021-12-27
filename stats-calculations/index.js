@@ -29,19 +29,19 @@ class MainExecuter {
         })
     }
 
-    readRatingsBasics(ratingsBasics) {
+    readRatingsBasics(ratingsBasics, minReviews) {
         const tooFewReviewsList = []
         ratingsBasics.forEach((nextLine) => {
             const lineContents = nextLine.split('\t')
             if (this.titles[lineContents[0]]) {
                 this.titles[lineContents[0]]['rating'] = lineContents[1]
-                if (lineContents[3] < 3000) {
-                    toFewReviewsList.push(lineContents[0])
+                if (lineContents[3] < minReviews) {
+                    tooFewReviewsList.push(lineContents[0])
                 }
             }
         })
         tooFewReviewsList.forEach(movieId => {
-            delete this.titles.movieId;
+            delete this.titles[movieId];
         })
     }
 
@@ -134,14 +134,15 @@ class MainExecuter {
 }
 
 const executer = new MainExecuter()
-const logNumber = process.argv[2] || 5;
+const logNumber = process.argv[3] || 5;
 
 const titleBasics = MainExecuter.readTsvDataBuffer('title.basics')
 executer.readTitleBasics(titleBasics)
 logTitles(logNumber)
 
 const ratingsBasics = MainExecuter.readTsvDataFs('title.ratings')
-executer.readRatingsBasics(ratingsBasics);
+const minReviews = process.argv[2] || 3000
+executer.readRatingsBasics(ratingsBasics, minReviews);
 logTitles(logNumber)
 
 executer.sortTitles()
