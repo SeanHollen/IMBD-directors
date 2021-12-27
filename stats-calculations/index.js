@@ -1,9 +1,12 @@
-const fs = require('fs');
+const fs = require('fs')
+const settings = require('./settings')
+const Files = require('./files')
 
 class MainExecuter {
 
     titles
     directors
+    sortedTitles
 
     constructor() {
         this.titles = {}
@@ -18,6 +21,11 @@ class MainExecuter {
     logDirectors(number) {
         console.log('directors length:', this.directors.length)
         console.log(this.directors.slice(0, number))
+    }
+
+    logSortedTitles(number) {
+        console.log('sorted titles length:', this.directors.length)
+        console.log(this.sortedTitles.slice(0, number))
     }
 
     readTitleBasics(titleBasics) {
@@ -45,16 +53,17 @@ class MainExecuter {
         })
     }
 
-    sortTitles() {
-        this.titles.sort((first, second) => {  // fix
+    createSortedTitles() {
+        const titlesArray = Object.keys(this.titles)
+        titlesArray.sort((first, second) => { 
             return first.rating - second.rating 
         })
     }
 
     assignOrderRatings() {
-        for (let place = 1; place <= this.titles.length; place++) {
-            const movie = this.titles[place - 1]
-            movie['orderRating'] = place / titles.length
+        for (let place = 1; place <= this.sortedTitles.length; place++) {
+            const movie = this.sortedTitles[place - 1]
+            this.titles[movie]['orderRating'] = place / titles.length
         }
     }
 
@@ -114,56 +123,36 @@ class MainExecuter {
         }, '')
     }
 
-    static writeToFile(output) {
-        fs.writeFileSync(`../output-data.csv`, output)
-    }
-
-    static readTsvDataFs(name) {
-        try {
-            const data = fs.readFileSync(`../data/${name}.tsv`, 'utf8')
-            return data.split('\n').slice(1)
-        } catch (e) {
-            throw new Error(e.message)
-        }
-    }
-
-    static readTsvDataBuffer(name) {
-        // todo 
-    }
-
 }
 
 const executer = new MainExecuter()
-const logNumber = process.argv[3] || 5;
 
-const titleBasics = MainExecuter.readTsvDataBuffer('title.basics')
+const titleBasics = Files.readTsvDataBuffer('title.basics')
 executer.readTitleBasics(titleBasics)
-logTitles(logNumber)
+logTitles(settings[logNumber])
 
-const ratingsBasics = MainExecuter.readTsvDataFs('title.ratings')
-const minReviews = process.argv[2] || 3000
-executer.readRatingsBasics(ratingsBasics, minReviews);
-logTitles(logNumber)
+const ratingsBasics = Files.readTsvDataFs('title.ratings')
+executer.readRatingsBasics(ratingsBasics, settings[minReviews]);
+logTitles(settings[logNumber])
 
-executer.sortTitles()
-logTitles(logNumber)
+executer.createSortedTitles()
+logTitles(settings[logNumber])
 
 executer.assignOrderRatings()
-logTitles(logNumber)
+logTitles(settings[logNumber])
 
-const crewBasics = MainExecuter.readTsvDataFs('title.crew')
+const crewBasics = Files.readTsvDataFs('title.crew')
 readCrewBasics(crewBasics)
-logDirectors(logNumber)
+logDirectors(settings[logNumber])
 
-const exponent = process.argv[1] || 5
-calculateScores(exponent)
-logDirectors(logNumber)
+calculateScores(settings[exponent])
+logDirectors(settings[logNumber])
 
-const namesBasics = MainExecuter.readTsvDataBuffer('name.basics')
+const namesBasics = Files.readTsvDataBuffer('name.basics')
 readNameBasics(namesBasics)
-logDirectors(logNumber)
+logDirectors(settings[logNumber])
 
 const output = generateOutput()
-console.log(output); 
-MainExecuter.writeToFile(output)
+console.log(output, settings[toOutput]); 
+Files.writeToFile(output)
 
