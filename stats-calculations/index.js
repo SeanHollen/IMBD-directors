@@ -5,8 +5,9 @@ const Files = require('./files')
 class MainExecuter {
 
     titles
-    directors
     sortedTitles
+    directors
+    sortedDirectors
 
     constructor() {
         this.titles = {}
@@ -28,6 +29,11 @@ class MainExecuter {
         console.log(this.sortedTitles.slice(0, number))
     }
 
+    logSortedDirectors(number) {
+        console.log('sorted directors length:', this.directors.length)
+        console.log(this.sortedDirectors.slice(0, number))
+    }
+
     readTitleBasics(titleBasics) {
         titleBasics.forEach((nextLine) => {
             const lineContents = nextLine.split('\t')
@@ -42,7 +48,7 @@ class MainExecuter {
         ratingsBasics.forEach((nextLine) => {
             const lineContents = nextLine.split('\t')
             if (this.titles[lineContents[0]]) {
-                this.titles[lineContents[0]]['rating'] = lineContents[1]
+                this.titles[lineContents[0]].rating = lineContents[1]
                 if (lineContents[3] < minReviews) {
                     tooFewReviewsList.push(lineContents[0])
                 }
@@ -54,16 +60,16 @@ class MainExecuter {
     }
 
     createSortedTitles() {
-        const titlesArray = Object.keys(this.titles)
-        titlesArray.sort((first, second) => { 
-            return first.rating - second.rating 
+        this.sortedTitles = Object.keys(this.titles)
+        this.sortedTitles.sort((first, second) => { 
+            return this.titles[first].rating - this.titles[second].rating 
         })
     }
 
     assignOrderRatings() {
         for (let place = 1; place <= this.sortedTitles.length; place++) {
             const movie = this.sortedTitles[place - 1]
-            this.titles[movie]['orderRating'] = place / titles.length
+            this.titles[movie].orderRating = place / titles.length
         }
     }
 
@@ -78,20 +84,27 @@ class MainExecuter {
                 if (this.directors[director]) {
                     this.directors[director] = { movies: [] }
                 }
-                this.directors[director]['movies'].push(lineContents[0])
+                this.directors[director].movies.push(lineContents[0])
             })
         })
     }
 
+    createSortedDirectors() {
+        this.sortedDirectors = Object.keys(this.titles)
+        this.sortedDirectors.sort((first, second) => { // descending
+            return this.directors[second].score - this.directors[first].score 
+        })
+    }
+
     calculateScores(exponent) {
-        Object.keys(this.directors).forEach(key => { 
+        this.sortedDirectors(this.directors).forEach(key => { 
             const director = this.directors[key]
-            director['score'] = director.movies.reduce((acc, movie) => {
-                const score = this.titles[movie]['orderRating']
+            director.score = director.movies.reduce((acc, movie) => {
+                const score = this.titles[movie].orderRating
                 acc += Math.pow(score, exponent)
             }, 0)
-            director['avgRating'] = director.movies.reduce((acc, movie) => {
-                acc += this.titles[movie]['rating']
+            director.avgRating = director.movies.reduce((acc, movie) => {
+                acc += this.titles[movie].rating
             }, 0) / director.movies.length
         })
     }
@@ -100,7 +113,7 @@ class MainExecuter {
         namesBasics.forEach(person => {
             const personDetails = person.split('\t')
             if (this.directors[personDetails[0]]) {
-                this.directors[personDetails[0]]['name'] = personDetails[1]
+                this.directors[personDetails[0]].name = personDetails[1]
             }
         })
     }
@@ -129,30 +142,33 @@ const executer = new MainExecuter()
 
 const titleBasics = Files.readTsvDataBuffer('title.basics')
 executer.readTitleBasics(titleBasics)
-logTitles(settings[logNumber])
+executer.logTitles(settings[logNumber])
 
 const ratingsBasics = Files.readTsvDataFs('title.ratings')
 executer.readRatingsBasics(ratingsBasics, settings[minReviews]);
-logTitles(settings[logNumber])
+executer.logTitles(settings[logNumber])
 
 executer.createSortedTitles()
-logTitles(settings[logNumber])
+executer.logTitles(settings[logNumber])
 
 executer.assignOrderRatings()
-logTitles(settings[logNumber])
+executer.logTitles(settings[logNumber])
 
 const crewBasics = Files.readTsvDataFs('title.crew')
-readCrewBasics(crewBasics)
-logDirectors(settings[logNumber])
+executer.readCrewBasics(crewBasics)
+executer.logDirectors(settings[logNumber])
 
-calculateScores(settings[exponent])
-logDirectors(settings[logNumber])
+executer.createSortedDirectors()
+executer.logSortedDirectors()
+
+executer.calculateScores(settings[exponent])
+executer.logDirectors(settings[logNumber])
 
 const namesBasics = Files.readTsvDataBuffer('name.basics')
-readNameBasics(namesBasics)
-logDirectors(settings[logNumber])
+executer.readNameBasics(namesBasics)
+executer.logDirectors(settings[logNumber])
 
 const output = generateOutput()
-console.log(output, settings[toOutput]); 
-Files.writeToFile(output)
+console.log(output, settings[toOutput])
+// Files.writeToFile(output)
 
