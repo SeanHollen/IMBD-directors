@@ -14,6 +14,8 @@ data from https://datasets.imdbws.com/
 
 navigate into stats-calculations
 
+install node and do ``npm i``
+
 ``node --max-old-space-size=5000 index.js`` 
 
 # results
