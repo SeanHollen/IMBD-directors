@@ -121,3 +121,5 @@ Aki Kaurismäki| 15| 7.3| 4.238
 S.S. Rajamouli| 7| 7.757| 4.225
 Asghar Farhadi| 8| 7.625| 4.193
 Sukumar| 6| 7.917| 4.166
+
+Out of 8977 considered directors

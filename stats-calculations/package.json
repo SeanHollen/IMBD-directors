@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest"
   },
-  "author": "",
+  "author": "Sean Hollen",
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.1-security",
