@@ -1,4 +1,4 @@
-export const settings = {
+module.exports = {
     minReviews: 3000,
     logNumber: 5,
     toOutput: 20,

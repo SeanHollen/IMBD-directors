@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "test"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "jest": "^27.4.5"
   }
 }
