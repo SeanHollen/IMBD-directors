@@ -85,25 +85,26 @@ describe('executer', () => {
         }
         const file = [
             'tt00	\N	\N',
-            'tt01	nm0000001,nm0000004	nm0000005',
+            'tt01	nm0000001,nm0000006	nm0000005',
             'tt11	nm0000001	nm4826235,nm1211274',
             'tt02	nm0000001	nm4826235,nm1211274',
-            'tt03	nm0000001	nm4826235,nm1211274',
-            'tt04	nm0000001	nm4826235,nm1211274',
-            'tt05	nm0000002	nm4826235,nm1211274',
-            'tt06	nm0000002	nm4826235,nm1211274',
-            'tt07	nm0000003	nm4826235,nm1211274',
-            'tt08	nm0000003	nm4826235,nm1211274',
-            'tt09	nm0000004	nm4826235,nm1211274',
+            'tt03	nm0000002	nm4826235,nm1211274',
+            'tt04	nm0000002	nm4826235,nm1211274',
+            'tt05	nm0000003	nm4826235,nm1211274',
+            'tt06	nm0000003	nm4826235,nm1211274',
+            'tt07	nm0000004	nm4826235,nm1211274',
+            'tt08	nm0000004	nm4826235,nm1211274',
+            'tt09	nm0000005	nm4826235,nm1211274',
             'tt10	nm0000005	nm4826235,nm1211274',
             ''
         ]
         const expectedOutput = {
-            nm0000001: { movies: [ 'tt01', 'tt02', 'tt03', 'tt04' ] },
-            nm0000002: { movies: [ 'tt05', 'tt06' ] },
-            nm0000003: { movies: [ 'tt07', 'tt08' ] },
-            nm0000004: { movies: [ 'tt01', 'tt09' ] },
-            nm0000005: { movies: [ 'tt10' ] },
+            nm0000006: { movies: [ 'tt01' ] },
+            nm0000001: { movies: [ 'tt01', 'tt02' ] },
+            nm0000002: { movies: [ 'tt03', 'tt04' ] },
+            nm0000003: { movies: [ 'tt05', 'tt06' ] },
+            nm0000004: { movies: [ 'tt07', 'tt08' ] },
+            nm0000005: { movies: [ 'tt09', 'tt10'] },
         }
         executer.readCrewBasics(file)
 
@@ -112,15 +113,46 @@ describe('executer', () => {
 
     it('should calculate scores', () => {
         const expectedOutput = {
-            nm0000001: { movies: [ 'tt01', 'tt02', 'tt03', 'tt04' ], 
-            score: 1, avgRating: 2.5 },
-            nm0000002: { movies: [ 'tt05', 'tt06' ], score: 1.1, avgRating: 0.55 },
-            nm0000003: { movies: [ 'tt07', 'tt08' ], score: 1.5, avgRating: 7.5 },
-            nm0000004: { movies: [ 'tt01', 'tt09' ], score: 1, avgRating: 0.5 },
-            nm0000005: { movies: [ 'tt10' ], score: 1, avgRating: 1 },
+            nm0000001: { movies: [ 'tt01', 'tt02' ], score: 0.3, avgRating: 1.5 },
+            nm0000002: { movies: [ 'tt03', 'tt04' ], score: 0.7, avgRating: 3.5 },
+            nm0000003: { movies: [ 'tt05', 'tt06' ], score: 1.1, avgRating: 5.5 },
+            nm0000004: { movies: [ 'tt07', 'tt08' ], score: 1.5, avgRating: 7.5 },
+            nm0000005: { movies: [ 'tt09', 'tt10' ], score: 1.9, avgRating: 9.5 },
+            nm0000006: { movies: [ 'tt01' ], score: 0.1, avgRating: 1 },
         }
-        executer.calculateScores()
+        executer.calculateScores(1)
 
         expect(executer.directors).toEqual(expectedOutput)
     })
+
+    it('create sorted directors list', () => {
+        const expectedOutput = [ 
+            'nm0000005', 'nm0000004', 'nm0000003', 'nm0000002', 'nm0000001', 'nm0000006',
+        ]
+        executer.createSortedDirectors()
+
+        expect(executer.sortedDirectors).toEqual(expectedOutput)
+    })
+
+    it('should read name basics and assign names to directors', () => {
+        const file = [
+            'nm0000005	Lauren Bacall	1924	',
+            'nm0000004	Brigitte Bardot	1934	',
+            'nm0000003	John Belushi	1949	',
+            'nm0000002	Ingmar Bergman	1918	',
+            'nm0000001	Dan Batman	1918	',
+            'nm0000006	Super Dunce	1918	'
+        ]
+        executer.readNameBasics(file)
+        const expectedOutput = {
+            nm0000001: { name: 'Dan Batman', movies: [ 'tt01', 'tt02' ], score: 0.3, avgRating: 1.5 },
+            nm0000002: { name: 'Ingmar Bergman', movies: [ 'tt03', 'tt04' ], score: 0.7, avgRating: 3.5 },
+            nm0000003: { name: 'John Belushi', movies: [ 'tt05', 'tt06' ], score: 1.1, avgRating: 5.5 },
+            nm0000004: { name: 'Brigitte Bardot', movies: [ 'tt07', 'tt08' ], score: 1.5, avgRating: 7.5 },
+            nm0000005: { name: 'Lauren Bacall', movies: [ 'tt09', 'tt10' ], score: 1.9, avgRating: 9.5 },
+            nm0000006: { name: 'Super Dunce', movies: [ 'tt01' ], score: 0.1, avgRating: 1 },
+        }
+
+        expect(executer.directors).toEqual(expectedOutput)
+    }) 
 })

@@ -60,6 +60,11 @@ class MainExecuter {
         tooFewReviewsList.forEach(movieId => {
             delete this.titles[movieId]
         })
+        Object.keys(this.titles).forEach(key => {
+            if (!this.titles[key].rating) {
+                delete this.titles[key]
+            }
+        })
     }
 
     createSortedTitles() {
@@ -98,24 +103,24 @@ class MainExecuter {
         })
     }
 
-    // todo: test
     calculateScores(exponent) {
         Object.keys(this.directors).forEach(key => { 
             const director = this.directors[key]
-            director.score = director.movies.reduce((acc, movie) => {
+            const calculatedScore = director.movies.reduce((acc, movie) => {
                 const score = this.titles[movie].orderRating
-                return acc + Math.pow(score, exponent) 
+                return acc + Math.pow(+score, exponent) 
             }, 0)
-            director.avgRating = director.movies.reduce((acc, movie) => {
+            director.score = Math.round(calculatedScore * 1000) / 1000
+            const avgRating = director.movies.reduce((acc, movie) => {
                 if (!this.titles[movie].rating) {
-                    return 0
+                    return acc
                 } 
-                return acc + this.titles[movie].rating
+                return acc + +this.titles[movie].rating
             }, 0) / director.movies.length
+            director.avgRating = Math.round(avgRating * 1000) / 1000
         })
     }
 
-    // todo: test
     createSortedDirectors() {
         this.sortedDirectors = Object.keys(this.directors)
         this.sortedDirectors.sort((first, second) => { // descending
@@ -123,7 +128,6 @@ class MainExecuter {
         })
     }
 
-    // todo: test
     readNameBasics(namesBasics) {
         namesBasics.forEach(person => {
             const personDetails = person.split('\t')
@@ -146,7 +150,7 @@ class MainExecuter {
                 director.name, 
                 director.movies.length, 
                 director.avgRating, 
-                Math.round(director.score * 100) / 100
+                director.score
             ].join(', ') + '\n'
         }, '')
     }

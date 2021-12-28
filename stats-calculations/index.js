@@ -7,16 +7,16 @@ const executer = new MainExecuter()
 const titleBasics = Files.readTsvDataBuffer('title.basics')
 executer.readTitleBasics(titleBasics)
 console.log("\n*** read title basics ***")
-// executer.logTitles(settings.logNumber)
+executer.logTitles(settings.logNumber)
 
 const ratingsBasics = Files.readTsvDataFs('title.ratings')
 executer.readRatingsBasics(ratingsBasics, settings.minReviews);
-console.log("\n*** read reatings basics ***")
-// executer.logTitles(settings.logNumber)
+console.log("\n*** read rating basics ***")
+executer.logTitles(settings.logNumber)
 
 executer.createSortedTitles()
 console.log("\n*** created sorted titles ***")
-// executer.logTitles(settings.logNumber)
+executer.logTitles(settings.logNumber)
 
 executer.assignOrderRatings()
 console.log("\n*** assigned order rating ***")
