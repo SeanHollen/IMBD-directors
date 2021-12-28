@@ -10,3 +10,9 @@ title.ratings.tsv
 
 data from https://datasets.imdbws.com/
 
+# how to run calculation
+
+navigate into stats-calculations
+
+``node --max-old-space-size=5000 index.js`` 
+
