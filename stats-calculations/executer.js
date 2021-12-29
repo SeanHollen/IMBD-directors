@@ -10,32 +10,6 @@ class MainExecuter {
         this.directors = {}
     }
 
-    logTitles(number) {
-        const keyArray = Object.keys(this.titles)
-        console.log('titles length:', keyArray.length)
-        keyArray.slice(0, number).forEach(key => {
-            console.log(`${key}: ${JSON.stringify(this.titles[key])}`)
-        })
-    }
-
-    logDirectors(number) {
-        const keyArray = Object.keys(this.directors)
-        console.log('directors length:', keyArray.length)
-        keyArray.slice(0, number).forEach(key => {
-            console.log(`${key}: ${JSON.stringify(this.directors[key])}`)
-        })
-    }
-
-    logSortedTitles(number) {
-        console.log('sorted titles length:', this.sortedTitles.length)
-        console.log(this.sortedTitles.slice(0, number))
-    }
-
-    logSortedDirectors(number) {
-        console.log('sorted directors length:', this.sortedDirectors.length)
-        console.log(this.sortedDirectors.slice(0, number))
-    }
-
     readTitleBasics(titleBasics) {
         titleBasics.forEach((nextLine) => {
             const lineContents = nextLine.split('\t')
