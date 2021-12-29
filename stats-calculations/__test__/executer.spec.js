@@ -45,7 +45,7 @@ describe('executer', () => {
             tt2396686: { title: 'movie 4', rating: '6.2' },
             tt2396687: { title: 'movie 5', rating: '5.1' },
         }
-        executer.readRatingsBasics(file, 3000)
+        executer.readRatingsBasicsIntoTitles(file, 3000)
 
         expect(executer.titles).toEqual(expectedOutput)
     })
@@ -61,27 +61,27 @@ describe('executer', () => {
 
     it('should assign order ratings', () => {
         const expectedOutput = {
-            tt2396683: { title: 'movie 1', rating: '6.0', orderRating: 2/3 },
-            tt2396686: { title: 'movie 4', rating: '6.2', orderRating: 3/3 },
-            tt2396687: { title: 'movie 5', rating: '5.1', orderRating: 1/3 },
+            tt2396683: { title: 'movie 1', rating: '6.0', rank: 2/3 },
+            tt2396686: { title: 'movie 4', rating: '6.2', rank: 3/3 },
+            tt2396687: { title: 'movie 5', rating: '5.1', rank: 1/3 },
         }
-        executer.assignOrderRatings()
+        executer.assignTitleRanks()
 
         expect(executer.titles).toEqual(expectedOutput)
     })
 
     it('should read crew basics', () => {
         executer.titles = {
-            tt01: { title: 'tt01', rating: '1', orderRating: 1/10 },
-            tt02: { title: 'tt02', rating: '2', orderRating: 2/10 },
-            tt03: { title: 'tt03', rating: '3', orderRating: 3/10 },
-            tt04: { title: 'tt04', rating: '4', orderRating: 4/10 },
-            tt05: { title: 'tt05', rating: '5', orderRating: 5/10 },
-            tt06: { title: 'tt06', rating: '6', orderRating: 6/10 },
-            tt07: { title: 'tt07', rating: '7', orderRating: 7/10 },
-            tt08: { title: 'tt08', rating: '8', orderRating: 8/10 },
-            tt09: { title: 'tt09', rating: '9', orderRating: 9/10 },
-            tt10: { title: 'tt10', rating: '10', orderRating: 10/10 },
+            tt01: { title: 'tt01', rating: '1', rank: 1/10 },
+            tt02: { title: 'tt02', rating: '2', rank: 2/10 },
+            tt03: { title: 'tt03', rating: '3', rank: 3/10 },
+            tt04: { title: 'tt04', rating: '4', rank: 4/10 },
+            tt05: { title: 'tt05', rating: '5', rank: 5/10 },
+            tt06: { title: 'tt06', rating: '6', rank: 6/10 },
+            tt07: { title: 'tt07', rating: '7', rank: 7/10 },
+            tt08: { title: 'tt08', rating: '8', rank: 8/10 },
+            tt09: { title: 'tt09', rating: '9', rank: 9/10 },
+            tt10: { title: 'tt10', rating: '10', rank: 10/10 },
         }
         const file = [
             'tt00	\N	\N',
@@ -120,7 +120,7 @@ describe('executer', () => {
             nm0000005: { movies: [ 'tt09', 'tt10' ], score: 1.9, avgRating: 9.5 },
             nm0000006: { movies: [ 'tt01' ], score: 0.1, avgRating: 1 },
         }
-        executer.calculateScores(1)
+        executer.scoreDirectors(1, 3)
 
         expect(executer.directors).toEqual(expectedOutput)
     })
@@ -143,7 +143,7 @@ describe('executer', () => {
             'nm0000001	Dan Batman	1918	',
             'nm0000006	Super Dunce	1918	'
         ]
-        executer.readNameBasics(file)
+        executer.readNameBasicsIntoDirectors(file)
         const expectedOutput = {
             nm0000001: { name: 'Dan Batman', movies: [ 'tt01', 'tt02' ], score: 0.3, avgRating: 1.5 },
             nm0000002: { name: 'Ingmar Bergman', movies: [ 'tt03', 'tt04' ], score: 0.7, avgRating: 3.5 },
@@ -155,4 +155,17 @@ describe('executer', () => {
 
         expect(executer.directors).toEqual(expectedOutput)
     }) 
+
+    it('should generate output string', () => {
+        const expectedOutput = 'name, # of movies, avg rating, score\n'
+        + 'Lauren Bacall, 2, 9.5, 1.9\n'
+        + 'Brigitte Bardot, 2, 7.5, 1.5\n'
+        + 'John Belushi, 2, 5.5, 1.1\n'
+        + 'Ingmar Bergman, 2, 3.5, 0.7\n'
+        + 'Dan Batman, 2, 1.5, 0.3\n'
+        + 'Super Dunce, 1, 1, 0.1\n'
+        const output = executer.generateCSVOutput()
+        
+        expect(output).toEqual(expectedOutput)
+    })
 })

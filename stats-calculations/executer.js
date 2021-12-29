@@ -19,7 +19,7 @@ class MainExecuter {
         })
     }
 
-    readRatingsBasics(ratingsBasics, minReviews) {
+    readRatingsBasicsIntoTitles(ratingsBasics, minReviews) {
         const tooFewReviewsList = []
         ratingsBasics.forEach((nextLine) => {
             const lineContents = nextLine.split('\t')
@@ -48,10 +48,10 @@ class MainExecuter {
         })
     }
 
-    assignOrderRatings() {
+    assignTitleRanks() {
         for (let place = 1; place <= this.sortedTitles.length; place++) {
             const movie = this.sortedTitles[place - 1]
-            this.titles[movie].orderRating = (place / this.sortedTitles.length)
+            this.titles[movie].rank = (place / this.sortedTitles.length)
         }
     }
 
@@ -77,22 +77,28 @@ class MainExecuter {
         })
     }
 
-    calculateScores(exponent) {
+    scoreDirectors(exponent, precision) {
+        const precisionX = Math.pow(10, precision)
         Object.keys(this.directors).forEach(key => { 
             const director = this.directors[key]
-            const calculatedScore = director.movies.reduce((acc, movie) => {
-                const score = this.titles[movie].orderRating
-                return acc + Math.pow(+score, exponent) 
-            }, 0)
-            director.score = Math.round(calculatedScore * 1000) / 1000
-            const avgRating = director.movies.reduce((acc, movie) => {
-                if (!this.titles[movie].rating) {
-                    return acc
-                } 
-                return acc + +this.titles[movie].rating
-            }, 0) / director.movies.length
-            director.avgRating = Math.round(avgRating * 1000) / 1000
+            this.calculateSumRanksExpScore(director, exponent, precisionX)
+            this.calculateAverageRating(director, precisionX)
         })
+    }
+
+    calculateSumRanksExpScore(director, exponent, precisionX) {
+        const calculatedScore = director.movies.reduce((acc, movie) => {
+            const score = this.titles[movie].rank
+            return acc + Math.pow(+score, exponent) 
+        }, 0)
+        director.score = Math.round(calculatedScore * precisionX) / precisionX
+    }
+
+    calculateAverageRating(director, precisionX) {
+        const avgRating = director.movies.reduce((acc, movie) => {
+            return acc + +this.titles[movie].rating
+        }, 0) / director.movies.length
+        director.avgRating = Math.round(avgRating * precisionX) / precisionX
     }
 
     createSortedDirectors() {
@@ -102,7 +108,7 @@ class MainExecuter {
         })
     }
 
-    readNameBasics(namesBasics) {
+    readNameBasicsIntoDirectors(namesBasics) {
         namesBasics.forEach(person => {
             const personDetails = person.split('\t')
             if (this.directors[personDetails[0]]) {
@@ -111,7 +117,7 @@ class MainExecuter {
         })
     }
 
-    generateOutput() {
+    generateCSVOutput() {
         return [
             'name',
             '# of movies',

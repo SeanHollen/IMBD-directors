@@ -4,61 +4,61 @@ const MainExecuter = require('./executer')
 const Logger = require('./logger')
 
 const executer = new MainExecuter()
-const logger = new Logger(settings.logNumber)
+const logger = new Logger(settings.numberToLog)
 
 const titleBasics = Files.readTsvDataBuffer('title.basics')
 executer.readTitleBasics(titleBasics)
-console.log("\n*** read title basics ***")
-if (settings.toLog) {
+console.log("\n*** title basics read ***")
+if (settings.isVerbose) {
     logger.logDictionary(executer.titles)
 }
 
 const ratingsBasics = Files.readTsvDataFs('title.ratings')
-executer.readRatingsBasics(ratingsBasics, settings.minReviews);
-console.log("\n*** read rating basics ***")
-if (settings.toLog) {
+executer.readRatingsBasicsIntoTitles(ratingsBasics, settings.minReviews);
+console.log("\n*** rating basics read ***")
+if (settings.isVerbose) {
     logger.logDictionary(executer.titles)
 }
 
 executer.createSortedTitles()
 console.log("\n*** created sorted titles ***")
-if (settings.toLog) {
+if (settings.isVerbose) {
     logger.logArray(executer.sortedTitles)
 }
 
-executer.assignOrderRatings()
-console.log("\n*** assigned order rating ***")
-if (settings.toLog) {
+executer.assignTitleRanks()
+console.log("\n*** assigned title ranks ***")
+if (settings.isVerbose) {
     logger.logDictionary(executer.titles)
 }
 
 const crewBasics = Files.readTsvDataFs('title.crew')
 executer.readCrewBasics(crewBasics)
-console.log("\n*** read crew basics ***")
-if (settings.toLog) {
+console.log("\n*** crew basics read ***")
+if (settings.isVerbose) {
     logger.logDictionary(executer.directors)
 }
 
-executer.calculateScores(settings.exponent)
+executer.scoreDirectors(settings.exponent, settings.precision)
 console.log("\n*** calculated scores ***")
-if (settings.toLog) {
+if (settings.isVerbose) {
     logger.logDictionary(executer.directors)
 }
 
 executer.createSortedDirectors()
 console.log("\n*** created sorted directors list ***")
-if (settings.toLog) {
+if (settings.isVerbose) {
     logger.logArray(executer.sortedDirectors)
 }
 
 const namesBasics = Files.readTsvDataBuffer('name.basics')
-executer.readNameBasics(namesBasics)
-if (settings.toLog) {
+executer.readNameBasicsIntoDirectors(namesBasics)
+if (settings.isVerbose) {
     logger.logDictionary(executer.direcotrs)
 }
 
-const output = executer.generateOutput()
-if (settings.toLog) {
+const output = executer.generateCSVOutput()
+if (settings.isVerbose) {
     console.log(output.slice(0, 100), settings.toOutput)
 }
 Files.writeToFile(output)
