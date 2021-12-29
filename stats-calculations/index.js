@@ -59,7 +59,7 @@ if (settings.isVerbose) {
 
 const output = executer.generateCSVOutput()
 if (settings.isVerbose) {
-    console.log(output.slice(0, 100), settings.toOutput)
+    console.log(output.slice(0, settings.numberOutputToLog))
 }
 Files.writeToFile(output)
 
